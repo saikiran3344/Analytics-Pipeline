@@ -1,0 +1,21 @@
+# lambda_function.py
+import boto3
+import json
+
+s3_client = boto3.client("s3")
+
+def lambda_handler(event, context):
+    for record in event["Records"]:
+        # Process each record
+        data = json.loads(record["body"])
+        print("Processing data:", data)
+
+        # Save data to S3
+        s3_client.put_object(
+            Bucket="customer-interactions",
+            Key=f"logs/{data['timestamp']}.json",
+            Body=json.dumps(data)
+        )
+        print("Data saved to S3")
+
+    return {"statusCode": 200, "body": "Success"}
